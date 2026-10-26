@@ -24,14 +24,15 @@ export default defineNuxtConfig({
 })
 ```
 
-Token: set `NUXT_MONITORING_TOKEN` in the build environment (GitHub org secret
-`NUXT_MONITORING_TOKEN`). It is baked into the server-only runtime config, the client
+Token: set `NUXT_MONITORING_TOKEN` in the build environment from the repo secret
+`NUXT_METRICS_TOKEN` (org secrets are not available for private repos on our plan, so
+the secret is set per repo). It is baked into the server-only runtime config, the client
 bundle never sees it. Setting the variable at runtime overrides the baked value.
 
 ```yaml
 # .github/workflows/…, build step
 env:
-  NUXT_MONITORING_TOKEN: ${{ secrets.NUXT_MONITORING_TOKEN }}
+  NUXT_MONITORING_TOKEN: ${{ secrets.NUXT_METRICS_TOKEN }}
 ```
 
 `NUXT_MONITORING_APP_NAME` (optional) overrides the `app` label.
