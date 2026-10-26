@@ -14,7 +14,7 @@ Without a token configured it always returns 404.
 ## Installation
 
 ```sh
-pnpm add github:wineworlds/nuxt-monitoring#v1.0.0
+pnpm add github:wineworlds/nuxt-monitoring#v1.1.0
 ```
 
 ```ts
@@ -24,12 +24,17 @@ export default defineNuxtConfig({
 })
 ```
 
-Runtime environment of the app:
+Token: set `NUXT_MONITORING_TOKEN` in the build environment (GitHub org secret
+`NUXT_MONITORING_TOKEN`). It is baked into the server-only runtime config, the client
+bundle never sees it. Setting the variable at runtime overrides the baked value.
 
-```sh
-NUXT_MONITORING_TOKEN=<token from infra-monitoring/.env>
-NUXT_MONITORING_APP_NAME=nuxt-example   # optional
+```yaml
+# .github/workflows/…, build step
+env:
+  NUXT_MONITORING_TOKEN: ${{ secrets.NUXT_MONITORING_TOKEN }}
 ```
+
+`NUXT_MONITORING_APP_NAME` (optional) overrides the `app` label.
 
 ## Options
 

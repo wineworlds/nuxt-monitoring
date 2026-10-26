@@ -50,10 +50,11 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
     const pkg = readAppPackage(nuxt.options.rootDir)
 
-    // token + app name are runtime values: NUXT_MONITORING_TOKEN, NUXT_MONITORING_APP_NAME
+    // NUXT_MONITORING_TOKEN / NUXT_MONITORING_APP_NAME override at runtime; a token present
+    // at build time (CI secret) is baked into the server-only runtime config
     const existing = nuxt.options.runtimeConfig.monitoring ?? {}
     nuxt.options.runtimeConfig.monitoring = {
-      token: '',
+      token: process.env.NUXT_MONITORING_TOKEN || '',
       appName: options.appName || pkg.name || 'nuxt',
       appVersion: pkg.version || '',
       path: options.path,
