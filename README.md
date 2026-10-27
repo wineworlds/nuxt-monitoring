@@ -14,7 +14,7 @@ Without a token configured it always returns 404.
 ## Installation
 
 ```sh
-pnpm add github:wineworlds/nuxt-monitoring#v1.2.0
+pnpm add github:wineworlds/nuxt-monitoring#v1.2.1
 ```
 
 ```ts

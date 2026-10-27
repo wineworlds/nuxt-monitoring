@@ -16,7 +16,7 @@ import {
   addServerPlugin,
   createResolver,
   defineNuxtModule,
-} from '@nuxt/kit'
+} from 'nuxt/kit'
 
 /** @type {Record<string, string[]>} */
 const defaultRequestGroups = {
