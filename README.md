@@ -14,7 +14,7 @@ Without a token configured it always returns 404.
 ## Installation
 
 ```sh
-pnpm add github:wineworlds/nuxt-monitoring#v1.1.0
+pnpm add github:wineworlds/nuxt-monitoring#v1.2.0
 ```
 
 ```ts
@@ -46,8 +46,17 @@ monitoring: {
   appName: '',
   // extra request groups by path prefix, merged over api/ipx/assets/internal; rest = ssr
   requestGroups: { shop: ['/shop/'] },
+  // 'auto': aggregate all workers when running in PM2 cluster mode with > 1 instance
+  cluster: 'auto',
 }
 ```
+
+## PM2 cluster mode
+
+In cluster mode all workers share one port and a scrape reaches a random worker. Every worker
+writes a snapshot of its metrics to `$TMPDIR/nuxt-monitoring/<app>/<pid>.json` every 10 s; the
+worker that answers the scrape aggregates all snapshots younger than 60 s. Counters and
+histograms are summed, `process_start_time_seconds` reports the newest worker start.
 
 ## Server utils
 

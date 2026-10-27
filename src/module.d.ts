@@ -12,6 +12,12 @@ export interface ModuleOptions {
    * `api`, `ipx`, `assets`, `internal`. Everything else is `ssr`.
    */
   requestGroups: Record<string, string[]>
+  /**
+   * Aggregate the metrics of all workers. `auto` = when running in PM2 cluster mode with
+   * more than one instance. Runtime: NUXT_MONITORING_CLUSTER
+   * @default 'auto'
+   */
+  cluster: 'auto' | boolean
 }
 
 declare const module: NuxtModule<ModuleOptions>
@@ -29,6 +35,7 @@ declare module '@nuxt/schema' {
       appVersion: string
       path: string
       requestGroups: Record<string, string[]>
+      cluster: 'auto' | boolean
     }
   }
 }

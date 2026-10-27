@@ -2,6 +2,7 @@
  * Prometheus metrics for Nuxt apps.
  *  - Node process metrics (heap, RSS, event loop lag, GC, handles) via prom-client
  *  - Request duration + in-flight requests per request group (ssr, api, ipx, …)
+ *  - PM2 cluster mode: workers share snapshots, the scraped worker reports the sum
  *  - Bearer-token protected endpoint (default /_metrics), scraped by the central
  *    Prometheus (wineworlds/infra-monitoring)
  *
@@ -43,6 +44,7 @@ export default defineNuxtModule({
     path: '/_metrics',
     appName: '',
     requestGroups: {},
+    cluster: 'auto',
   },
   setup(options, nuxt) {
     if (!options.enabled) return
@@ -59,6 +61,7 @@ export default defineNuxtModule({
       appVersion: pkg.version || '',
       path: options.path,
       requestGroups: { ...defaultRequestGroups, ...options.requestGroups },
+      cluster: options.cluster,
       ...existing,
     }
 

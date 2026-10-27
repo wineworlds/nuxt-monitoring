@@ -1,5 +1,6 @@
 import client from 'prom-client'
 import { useRuntimeConfig } from '#imports'
+import { isClusterMode, startSnapshots } from './cluster.js'
 
 // One registry per process, kept on globalThis so dev HMR does not register metrics twice
 const STATE = Symbol.for('wineworlds.nuxt-monitoring')
@@ -11,21 +12,28 @@ function createState(config) {
   const registry = new client.Registry()
   registry.setDefaultLabels({ app: config.appName })
   client.collectDefaultMetrics({ register: registry })
+  // cluster aggregation would omit it; the newest start keeps worker restarts visible
+  registry.getSingleMetric('process_start_time_seconds').aggregator = 'max'
 
   new client.Gauge({
     name: 'nuxt_app_info',
     help: 'App version and runtime (constant 1), useful as deploy marker',
     labelNames: ['version', 'node_version'],
+    aggregator: 'first',
     registers: [registry],
   }).set({ version: config.appVersion || 'unknown', node_version: process.version }, 1)
 
+  const clustered = isClusterMode(config.cluster)
+  if (clustered) startSnapshots(registry, config.appName)
+
   return {
     registry,
+    clustered,
     httpDuration: new client.Histogram({
       name: 'http_request_duration_seconds',
       help: 'Duration of HTTP requests until the response is closed',
       labelNames: ['method', 'status', 'group'],
-      buckets: [0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+      buckets: [0.025, 0.05, 0.075, 0.1, 0.15, 0.25, 0.5, 1, 2.5, 5, 10],
       registers: [registry],
     }),
     httpInFlight: new client.Gauge({

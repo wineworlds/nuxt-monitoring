@@ -1,6 +1,6 @@
 {
   "name": "@wineworlds/nuxt-monitoring",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Prometheus metrics for Nuxt apps (Node process, SSR/API request timings) scraped by the central wineworlds monitoring",
   "license": "MIT",
   "type": "module",
