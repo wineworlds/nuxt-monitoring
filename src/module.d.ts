@@ -18,6 +18,18 @@ export interface ModuleOptions {
    * @default 'auto'
    */
   cluster: 'auto' | boolean
+  /**
+   * Error tracking via GlitchTip (Sentry-compatible, @sentry/nuxt). Active only when a DSN
+   * is set at build time (`NUXT_PUBLIC_SENTRY_DSN` or `dsn`); otherwise no Sentry code is bundled.
+   */
+  sentry: Partial<SentryOptions>
+}
+
+export interface SentryOptions {
+  /** DSN of the GlitchTip project. Build env NUXT_PUBLIC_SENTRY_DSN takes precedence. */
+  dsn: string
+  /** Build env NUXT_PUBLIC_SENTRY_ENVIRONMENT takes precedence. @default 'production' */
+  environment: string
 }
 
 declare const module: NuxtModule<ModuleOptions>
@@ -36,6 +48,15 @@ declare module '@nuxt/schema' {
       path: string
       requestGroups: Record<string, string[]>
       cluster: 'auto' | boolean
+    }
+  }
+  interface PublicRuntimeConfig {
+    /** Only present when the module was built with a DSN. Runtime: NUXT_PUBLIC_SENTRY_* */
+    sentry?: {
+      dsn: string
+      environment: string
+      /** `<appName>@<version>` from the app's package.json */
+      release: string
     }
   }
 }

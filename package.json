@@ -1,7 +1,7 @@
 {
   "name": "@wineworlds/nuxt-monitoring",
-  "version": "1.2.1",
-  "description": "Prometheus metrics for Nuxt apps (Node process, SSR/API request timings) scraped by the central wineworlds monitoring",
+  "version": "1.3.0",
+  "description": "Prometheus metrics for Nuxt apps (Node process, SSR/API request timings) scraped by the central wineworlds monitoring, optional error tracking via GlitchTip/Sentry",
   "license": "MIT",
   "type": "module",
   "repository": "github:wineworlds/nuxt-monitoring",
@@ -17,6 +17,7 @@
     "src"
   ],
   "dependencies": {
+    "@sentry/nuxt": "11.8.0",
     "prom-client": "^15.1.3"
   },
   "peerDependencies": {
