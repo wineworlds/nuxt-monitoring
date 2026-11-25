@@ -30,6 +30,12 @@ export interface SentryOptions {
   dsn: string
   /** Build env NUXT_PUBLIC_SENTRY_ENVIRONMENT takes precedence. @default 'production' */
   environment: string
+  /**
+   * When breadcrumbs (clicks, navigation, fetch/xhr without query strings, console) are sent:
+   * `always`, only with diagnostics consent (`consent`) or `never`.
+   * Build env NUXT_PUBLIC_SENTRY_BREADCRUMBS takes precedence. @default 'always'
+   */
+  breadcrumbs: 'always' | 'consent' | 'never'
 }
 
 declare const module: NuxtModule<ModuleOptions>
@@ -57,6 +63,7 @@ declare module '@nuxt/schema' {
       environment: string
       /** `<appName>@<version>` from the app's package.json */
       release: string
+      breadcrumbs: 'always' | 'consent' | 'never'
     }
   }
 }
