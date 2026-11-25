@@ -2,16 +2,8 @@
 // Runs inside a Nuxt plugin, so the public runtime config is available.
 import * as Sentry from '@sentry/nuxt'
 import { useRuntimeConfig } from '#imports'
+import { initSentry } from './setup.mjs'
 
-const { dsn, environment, release } = useRuntimeConfig().public.sentry ?? {}
+const config = useRuntimeConfig().public.sentry ?? {}
 
-if (dsn) {
-  Sentry.init({
-    dsn,
-    environment,
-    release,
-    // errors only: no performance traces, no session replay, no PII
-    tracesSampleRate: 0,
-    sendDefaultPii: false,
-  })
-}
+if (config.dsn) initSentry(Sentry, config)
