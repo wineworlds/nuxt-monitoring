@@ -11,10 +11,14 @@
  * build. Without a DSN no Sentry code ends up in the bundle.
  *
  * Server utils (auto-imported): useMetrics(), registerRequestGroup()
+ * Error tracking (auto-imported, app and server, no-ops without DSN): captureAppError(),
+ * captureAppMessage(), registerEventFilter(), setDiagnosticsConsent(), hasDiagnosticsConsent(),
+ * registerDiagnosticsContext()
  */
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
+  addImports,
   addServerHandler,
   addServerImports,
   addServerPlugin,
@@ -54,6 +58,7 @@ export default defineNuxtModule({
     sentry: {
       dsn: '',
       environment: '',
+      breadcrumbs: 'always',
     },
   },
   async setup(options, nuxt) {
@@ -87,6 +92,19 @@ export default defineNuxtModule({
       handler: resolve('./runtime/server/routes/metrics'),
     })
 
+    // always registered, so apps can call them with or without a DSN
+    const registry = resolve('./runtime/sentry/registry.mjs')
+    const appImports = [
+      'captureAppError',
+      'captureAppMessage',
+      'registerEventFilter',
+      'setDiagnosticsConsent',
+      'hasDiagnosticsConsent',
+      'registerDiagnosticsContext',
+    ]
+    addImports(appImports.map((name) => ({ name, from: registry })))
+    addServerImports(['captureAppError', 'captureAppMessage', 'registerEventFilter'].map((name) => ({ name, from: registry })))
+
     await setupSentry(options.sentry ?? {}, nuxt, {
       release: pkg.version ? `${appName}@${pkg.version}` : appName,
       configDir: resolve('./runtime/sentry'),
@@ -110,6 +128,7 @@ async function setupSentry(options, nuxt, { release, configDir }) {
     dsn,
     environment: process.env.NUXT_PUBLIC_SENTRY_ENVIRONMENT || options.environment || 'production',
     release,
+    breadcrumbs: process.env.NUXT_PUBLIC_SENTRY_BREADCRUMBS || options.breadcrumbs || 'always',
   }
 
   // client: drop the tracing and debug code paths of the SDK (errors only)
